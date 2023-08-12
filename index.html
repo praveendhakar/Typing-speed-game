@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Ubuntu&display=swap');
+    *{
+        margin: 0px;
+        padding: 0px;
+        font-family: 'Ubuntu', sans-serif;
+    }
+
+    body{
+        background: linear-gradient(to bottom right, #33ccff 0% , #ff99cc 100%);
+        background-repeat: no-repeat;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    h1{
+        margin: 10px;
+    }
+ 
+    .container{
+        width: 100%;
+        max-width: 600px;
+        background-color: white;
+        border-radius: 10px;
+        padding: 20px;
+        position: relative;
+    }
+
+    .container input{
+        z-index: -10;
+        position: absolute;
+        opacity: 0;
+    }
+
+    #pg{
+        background-color: white;
+        color: rgb(163, 158, 158);
+        word-break: break-all;
+        letter-spacing: 2px;
+        text-align: justify;
+    }
+
+    #pg span{
+        position: relative;
+    }
+
+    #pg span.active::before{
+        position: absolute;
+        content: "";
+        height: 2px;
+        background-color: #ff99cc;
+        width: 100%;
+        bottom: 0;
+        left: 0;
+        animation: blink 1s ease-in-out infinite;
+    }
+
+    /* #pg::selection{
+        background-color: #ff99cc;
+        color: black;
+    } */
+
+    .containerin{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 20px;
+        background-color: #242424;
+        padding: 10px;
+        border-radius: 5px;
+    }
+
+    .result{
+        display: flex;
+        color: white;
+        width: 90%;
+    }
+
+    .result .txt1{
+        font-size: 16px;
+    }
+
+    .result .txt2{
+        font-size: 20px;
+        font-weight: bold;
+        background-color: #ff33ff;
+        border-radius: 15px;
+        padding: 5px;
+        text-align: center;
+        min-width: 50px;
+    }
+
+    .result div{
+        display: flex;
+        align-items: center;
+        flex-direction: column-reverse;
+        margin: 0px 12px;
+    }
+
+    /* .container button{
+        background-color: rgb(62, 126, 222);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        font-size: 20px;
+        font-weight: bold;
+        border-radius: 5px;
+    } */
+    .container button {
+        width: 220px;
+        height: 50px;
+        border: none;
+        outline: none;
+        color: #fff;
+        background-color: #242424;
+        cursor: pointer;
+        position: relative;
+        z-index: 0;
+        border-radius: 10px;
+        font-size: 20px;
+        font-weight: bold;
+    }
+
+    .container button:before {
+        content: '';
+        background: linear-gradient(45deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8, #ff0000);
+        position: absolute;
+        top: -2px;
+        left:-2px;
+        background-size: 400%;
+        z-index: -1;
+        filter: blur(5px);
+        width: calc(100% + 4px);
+        height: calc(100% + 4px);
+        animation: glowing 20s linear infinite;
+        opacity: 0;
+        transition: opacity .3s ease-in-out;
+        border-radius: 10px;
+    }
+
+    .container button:active {
+        color: #000
+    }
+
+    .container button:active:after {
+        background: transparent;
+    }
+
+    .container button:hover:before {
+        opacity: 1;
+    }
+
+    .container button:after {
+        z-index: -1;
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: #111;
+        left: 0;
+        top: 0;
+        border-radius: 10px;
+    }
+
+    @keyframes glowing {
+        0% { background-position: 0 0; }
+        50% { background-position: 400% 0; }
+        100% { background-position: 0 0; }
+    }
+
+    @keyframes blink{
+        50%{
+            opacity: 0;
+        }
+    }
+
+    #pg span.correct{
+        color: green;
+    }
+
+    #pg span.incorrect{
+        color: red;
+    }
+</style>
+<body>
+    <h1> Typing Speed Game </h1>
+    <div class = "container">
+        <input type = "text" class="textinput"/>
+
+        <div class="background-text">
+            <p id="pg">     
+            </p>
+
+            <div class="containerin">
+                <div class="result">
+                    <div class="time">
+                        <p class = "txt1">Time</p>
+                        <p class="txt2">60 s</p>
+                    </div>
+
+                    <div class="wpm">
+                        <p class = "txt1">WPM</p>
+                        <p class="txt2">0</p>
+                    </div>
+
+                    <div class="mistakes">
+                        <p class = "txt1">Mistakes</p>
+                        <p class="txt2">0</p>
+                    </div>
+
+                    <div class="cpm">
+                        <p class = "txt1">CPM</p>
+                        <p class="txt2">0</p>
+                    </div>
+                </div>
+                <button> Reset </button>
+            </div>
+
+        </div>
+    </div>
+</body>
+<noscript>
+    <div id="js-warning">
+        To be able to access all of our features, you need a browser that supports JavaScript, and it needs to be enabled.
+    </div>
+</noscript>
+
+<script>
+    const paragraphs = ["As the sun dipped below the horizon, a warm orange glow spread across the serene landscape. The chirping of birds gradually subsided, signaling the end of the day. A gentle breeze rustled the leaves, creating a soothing melody. Twilight embraced the world, and stars emerged one by one, sparkling like diamonds in the night sky. Nature's symphony enveloped everything, leaving a sense of tranquility in its wake. It was a moment to cherish, a reminder of the beauty that lay in simplicity.",
+    "The city streets were alive with activity, as people hurriedly went about their business. Footsteps formed a rhythmic pattern on the pavement, and neon lights illuminated the cityscape, painting the buildings in vivid colors. Taxis whizzed past, honking impatiently at the traffic. The city's energy was contagious, drawing visitors and locals alike into its vibrant embrace. Amidst the chaos, there was a charm that captivated hearts and made the city come alive.",
+    "Deep within the dense forest, a hidden waterfall cascaded down the moss-covered rocks. The water glistened in the sunlight, reflecting the rich greens of the surrounding foliage. Birds of various hues flitted about, their songs harmonizing with the gentle sounds of the stream. It was a sanctuary of peace and beauty, untouched by the hurried pace of the outside world. A place to find solace and connect with nature's wonders.",
+    "The ancient castle stood tall, its imposing walls telling tales of a bygone era. Inside, the air was thick with history, and the whispers of long-departed souls seemed to echo through the corridors. Time had etched its mark on the castle, yet its grandeur remained intact, a symbol of resilience. Exploring its halls was like stepping back in time, discovering the secrets of a forgotten age.",
+    "In the realm of dreams, imagination soared without bounds. Flying over valleys of clouds, riding mythical creatures, and exploring uncharted lands was all possible in this realm of infinite possibilities. Every night brought new adventures, each one more enchanting than the last. It was a world of magic, where dreams and reality intertwined, leaving an indelible mark on the dreamer's soul.",
+    "As the first drops of rain fell, the parched earth eagerly soaked in the precious liquid. The scent of petrichor filled the air, rejuvenating spirits and bringing smiles to faces. The rhythmic pitter-patter of raindrops on rooftops provided a comforting soundtrack to a cozy evening indoors. The rain washed away the day's worries, leaving a sense of renewal in its wake. It was a moment to cherish, a reminder of the importance of appreciating life's simple pleasures.",
+    "In a small coastal village, fishermen set sail at dawn, their boats gently rocking with the waves. The sea offered its bounty generously, and the fish market came alive with vibrant colors and bustling activity. The salty breeze carried stories of distant lands and untamed oceans. It was a way of life deeply connected to the rhythm of the tides and the dance of the sea. Each catch represented not only sustenance but also a testament to the fishermen's skill and courage in facing the unpredictable waters. The villagers shared a bond with the ocean, respecting its power while cherishing its gifts.",
+    "The inventor's workshop was a sanctuary of ingenuity. Gears, cogs, and eccentric contraptions adorned every corner. The air hummed with the buzz of machinery, and sparks of creativity flew like shooting stars. This was where ideas took shape and inventions came to life, changing the course of human history. The inventor's mind was a cauldron of possibilities, continuously exploring uncharted territories of imagination. With each creation, they challenged the limits of what was deemed possible, pushing the boundaries of science and engineering.",
+    ];
+
+    const pg = document.getElementById('pg');
+    const userinput = document.querySelector('.textinput');
+    const resetbtn = document.querySelector('.containerin button');
+    const totaltime = document.querySelector('.time .txt2');
+    const totalwpm = document.querySelector('.wpm .txt2');
+    const totalmistakes = document.querySelector('.mistakes .txt2');
+    const totalcpm = document.querySelector('.cpm .txt2');
+    let timer;
+    let maxTime = 60;
+    let timeRemaining = maxTime;
+    let charIndex = 0;
+    let mistakes = 0;
+    let isTyping = 0;
+
+    const setparagraph = ()=>{
+        const randIndex = Math.floor(Math.random()*paragraphs.length)
+        pg.innerText = "";
+        paragraphs[randIndex].split("").forEach(char => {
+            //console.log(char);
+            pg.innerHTML += `<span>${char}</span>`;
+        })
+
+        pg.querySelectorAll('span')[0].classList.add('active');
+        document.addEventListener("keydown", ()=> userinput.focus())
+        pg.addEventListener("click", () => userinput.focus())
+
+        totalwpm.innerText = 0;
+        totaltime.innerText = timeRemaining;
+        totalcpm.innerText = 0;
+        totalmistakes.innerText = 0;
+    }
+
+    const startTyping = ()=>{
+
+        let characters = pg.querySelectorAll('span');
+        // console.log(characters);
+        let typedChar = userinput.value.split("")[charIndex];
+        if(charIndex < characters.length - 1 && timeRemaining > 0){
+            if(!isTyping){
+                timer = setInterval(startTimer, 1000);
+                isTyping = true;
+            }
+
+            if(typedChar == null){
+                if(charIndex > 0){
+                    charIndex--;
+                    if(characters[charIndex].classList.contains("incorrect")){
+                        mistakes--;
+                    }
+                    characters[charIndex].classList.remove("incorrect", "correct");
+                }
+            }
+            else{
+                if(characters[charIndex].innerText == typedChar){
+                    characters[charIndex].classList.add("correct");
+                }
+                else{
+                    characters[charIndex].classList.add("incorrect");
+                    mistakes++;
+                }
+                charIndex++;
+            }
+
+            characters.forEach(char => {
+                char.classList.remove("active");
+            })
+            characters[charIndex].classList.add("active");
+            
+            let wpm = Math.round(((charIndex-mistakes)/5 )/ (maxTime-timeRemaining)*60);
+            wpm = wpm < 0 || !wpm || wpm == Infinity ? 0:
+            wpm;
+            totalwpm.innerText = wpm;
+            totalmistakes.innerText = mistakes;
+            totalcpm.innerText = charIndex - mistakes;
+        }
+
+        else{
+            clearInterval(timer);
+            isTyping = false;
+        }
+    }
+    const startTimer = ()=>{
+        if(timeRemaining > 0){
+            timeRemaining--;
+            totaltime.innerText = timeRemaining;
+            let wpm = Math.round(((charIndex - mistakes) / 5) / (maxTime - timeRemaining) * 60);
+            totalwpm.innerHTML = wpm;
+        }
+        else{
+            clearInterval(timer);
+            isTyping = false;
+
+        }
+    }
+
+    const resetGame = ()=>{
+        setparagraph();
+        clearInterval(timer)
+        timeRemaining = maxTime;
+        charIndex = 0;
+        mistakes = 0;
+        isTyping = 0;
+        userinput.value = "";
+        totalwpm.innerText = 0;
+        totaltime.innerText = timeRemaining;
+        totalcpm.innerText = 0;
+        totalmistakes.innerText = 0;
+    }
+
+    setparagraph();
+    resetbtn.addEventListener('click', resetGame);
+    userinput.addEventListener('input', startTyping);
+
+</script>
+</html>
